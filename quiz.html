@@ -1,0 +1,147 @@
+# quiz
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random GK Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5f5f5;
+            margin: 0;
+        }
+        .quiz-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .next-btn {
+            margin-top: 15px;
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h2>General Knowledge Quiz</h2>
+        <p class="question">Loading question...</p>
+        <div class="options"></div>
+        <button class="next-btn" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <script>
+        const quizData = [
+            { question: "What is the capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo" },
+            { question: "Who wrote 'Hamlet'?", options: ["Charles Dickens", "William Shakespeare", "Mark Twain", "J.K. Rowling"], answer: "William Shakespeare" },
+            { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: "Mars" },
+            { question: "What is the chemical symbol for water?", options: ["O2", "H2O", "CO2", "NaCl"], answer: "H2O" },
+            { question: "How many continents are there on Earth?", options: ["5", "6", "7", "8"], answer: "7" },
+            { question: "Which ocean is the largest?", options: ["Atlantic", "Indian", "Pacific", "Arctic"], answer: "Pacific" },
+            { question: "Who discovered gravity?", options: ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Nikola Tesla"], answer: "Isaac Newton" },
+            { question: "What is the national animal of India?", options: ["Tiger", "Lion", "Elephant", "Peacock"], answer: "Tiger" }
+        ];
+
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+
+        function shuffleArray(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function loadRandomQuestions() {
+            currentQuestions = shuffleArray([...quizData]).slice(0, 5); // Pick 5 random questions
+            currentIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const questionEl = document.querySelector(".question");
+            const optionsEl = document.querySelector(".options");
+            const nextBtn = document.querySelector(".next-btn");
+
+            let currentQuestion = currentQuestions[currentIndex];
+            questionEl.textContent = currentQuestion.question;
+            optionsEl.innerHTML = "";
+
+            let shuffledOptions = shuffleArray([...currentQuestion.options]);
+            shuffledOptions.forEach(option => {
+                let button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsEl.appendChild(button);
+            });
+
+            nextBtn.style.display = "none";
+        }
+
+        function checkAnswer(selected) {
+            let correctAnswer = currentQuestions[currentIndex].answer;
+            if (selected === correctAnswer) {
+                score++;
+            }
+            document.querySelector(".next-btn").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.querySelector(".quiz-container").innerHTML = `
+                <h2>Quiz Completed!</h2>
+                <p>Your Score: ${score} / ${currentQuestions.length}</p>
+                <button onclick="loadRandomQuestions()">Play Again</button>
+            `;
+        }
+
+        loadRandomQuestions();
+    </script>
+
+</body>
+</html>
